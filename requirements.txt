@@ -1,3 +1,6 @@
+#twitter
+python-twitter
 twitter
 IPython
-prettytable
+prettytable==0.7.2
+jupyter
