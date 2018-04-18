@@ -4,3 +4,5 @@ twitter
 IPython
 prettytable==0.7.2
 jupyter
+OAuth
+Flask-OAuth
