@@ -2,6 +2,7 @@
 import oauth2 as oauth
 import twitter
 import urllib
+import json
 
 import config
 
@@ -11,6 +12,7 @@ from flask import (
     render_template,
     session,
     url_for,
+    request,
 )
 
 try:
@@ -40,13 +42,10 @@ def index():
 
 @app.route('/login', methods = [ 'GET', 'POST' ])
 def login():
-    res, content = oauth_client.request(
-        'https://api.twitter.com/oauth/request_token?%s'
-        % urllib.urlencode({
-             'oauth_callback': 'http://localhost:5000' + url_for('root.oauth_authorized')
-        }).replace('+', '%20'),
-        'GET',
-    )
+    res, content = oauth_client.request('https://api.twitter.com/oauth/request_token?%s' % urllib.urlencode({
+                                        'oauth_callback': 'http://localhost:5000' + url_for('root.oauth_authorized')
+                                        }).replace('+', '%20'),
+                    'GET',)
     if res['status'] != '200':
         raise Exception(
             "Invalid response %s: %s" % (res['status'], content)
@@ -54,6 +53,9 @@ def login():
 
     request_token = dict(parse_qsl(content))
     session['request_token'] = request_token
+
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    print(request_token)
     url = 'https://api.twitter.com/oauth/authorize?%s' % (
         urllib.urlencode({
              'oauth_token': request_token['oauth_token'],
@@ -69,25 +71,29 @@ def oauth_authorized():
         request_token['oauth_token'],
         request_token['oauth_token_secret']
     )
-    print(">>>>>>>>>>>>>>>")
-    print(token)
-    print("<<<<<<<<<<<<<<<")
+    oauth_verifier = request.args.get('oauth_verifier')
+
     client = oauth.Client(oauth_consumer, token)
     res, content = client.request(
         'https://api.twitter.com/oauth/access_token',
-        'POST'
+        method='POST',
+        body="oauth_verifier=" + oauth_verifier
     )
-
+    print(">>>>>>>>>>>>>>>>>>>> Request <<<<<<<<<<<<<<<<<<")
+    print(oauth_verifier)
     if res['status'] != '200':
         raise Exception(
             "Invalid response %s: %s" % (res['status'], content)
         )
     access_token = dict(parse_qsl(content))
 
-    api = twitter.Api(
-        consumer_key = config.object.TWITTER_OAUTH_CONSUMER_KEY,
-        consumer_secret = config.object.TWITTER_OAUTH_CONSUMER_SECRET,
-        access_token_key = access_token['oauth_token'],
-        access_token_secret =  access_token['oauth_token_secret'],
-    )
-    return str(api.VerifyCredentials())
+
+    api = oauth_login(access_token['oauth_token'], access_token['oauth_token_secret'], 
+        config.object.TWITTER_OAUTH_CONSUMER_KEY, config.object.TWITTER_OAUTH_CONSUMER_SECRET)
+    
+    return json.dumps(api.trends.place(_id=23424768))
+
+
+def oauth_login(oauth_token, oauth_token_secret, consumer_key, consumer_secret):
+    auth = twitter.oauth.OAuth(oauth_token, oauth_token_secret, consumer_key, consumer_secret)
+    return twitter.Twitter(auth=auth)
