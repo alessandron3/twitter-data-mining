@@ -32,12 +32,7 @@ oauth_client = oauth.Client(oauth_consumer)
 
 @app.route('/')
 def index():
-    access_token = session.get('access_token')
-    if access_token is None:
-        return redirect(url_for('root.login'))
- 
-    access_token = access_token[0]
- 
+
     return render_template('index.html')
 
 @app.route('/login', methods = [ 'GET', 'POST' ])
@@ -54,8 +49,6 @@ def login():
     request_token = dict(parse_qsl(content))
     session['request_token'] = request_token
 
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    print(request_token)
     url = 'https://api.twitter.com/oauth/authorize?%s' % (
         urllib.urlencode({
              'oauth_token': request_token['oauth_token'],

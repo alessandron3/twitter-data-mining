@@ -1,8 +1,7 @@
-#twitter
-python-twitter
-twitter
-IPython
+python-twitter==3.4.1
+twitter==1.18.0
+IPython==5.6.0
 prettytable==0.7.2
-jupyter
-OAuth
-Flask-OAuth
+jupyter==1.0.0
+OAuth==1.0.1
+Flask-OAuth==0.12
