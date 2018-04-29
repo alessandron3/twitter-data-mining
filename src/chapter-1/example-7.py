@@ -6,7 +6,7 @@ from collections import Counter
 auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET, CONSUMER_KEY, CONSUMER_SECRET)
 twitter_api = twitter.Twitter(auth=auth)
 
-q = '#Apocalipse86'
+q = '#F1naGlobo'
 
 count = 100
 

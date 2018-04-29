@@ -20,7 +20,6 @@ try:
 except:
     from cgi import parse_qsl
 
-
 app = Blueprint('root', __name__)
 
 oauth_consumer = oauth.Consumer(
@@ -32,8 +31,11 @@ oauth_client = oauth.Client(oauth_consumer)
 
 @app.route('/')
 def index():
-
-    return render_template('index.html')
+    name = session['user']['screen_name']
+    img = session['user']['profile_image_url']
+    print(img)
+    
+    return render_template('index.html', name=name, profile_image=img)
 
 @app.route('/login', methods = [ 'GET', 'POST' ])
 def login():
@@ -72,8 +74,7 @@ def oauth_authorized():
         method='POST',
         body="oauth_verifier=" + oauth_verifier
     )
-    print(">>>>>>>>>>>>>>>>>>>> Request <<<<<<<<<<<<<<<<<<")
-    print(oauth_verifier)
+
     if res['status'] != '200':
         raise Exception(
             "Invalid response %s: %s" % (res['status'], content)
@@ -83,8 +84,13 @@ def oauth_authorized():
 
     api = oauth_login(access_token['oauth_token'], access_token['oauth_token_secret'], 
         config.object.TWITTER_OAUTH_CONSUMER_KEY, config.object.TWITTER_OAUTH_CONSUMER_SECRET)
-    
-    return json.dumps(api.trends.place(_id=23424768))
+    session['oauth_token'] = access_token['oauth_token']
+    session['oauth_token_secret'] = access_token['oauth_token_secret']
+
+    user = api.account.verify_credentials()
+    session['user'] = user
+
+    return redirect('http://localhost:5000/')
 
 
 def oauth_login(oauth_token, oauth_token_secret, consumer_key, consumer_secret):
