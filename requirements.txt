@@ -6,3 +6,4 @@ jupyter==1.0.0
 OAuth==1.0.1
 Flask-OAuth==0.12
 Flask
+yweather

@@ -3,6 +3,7 @@ import oauth2 as oauth
 import twitter
 import urllib
 import json
+import yweather
 
 import config
 
@@ -13,6 +14,7 @@ from flask import (
     session,
     url_for,
     request,
+    jsonify,
 )
 
 try:
@@ -33,9 +35,39 @@ oauth_client = oauth.Client(oauth_consumer)
 def index():
     name = session['user']['screen_name']
     img = session['user']['profile_image_url']
-    print(img)
     
     return render_template('index.html', name=name, profile_image=img)
+
+@app.route('/trends')
+def trends(): 
+    name = session['user']['screen_name']
+    img = session['user']['profile_image_url']
+
+    return render_template('trends.html', name=name, profile_image=img)
+
+@app.route('/trends-woeid')
+def trends_json():
+    region = request.args.get('region')
+    client = yweather.Client()
+    woeid = client.fetch_woeid(region)
+
+    api = oauth_login(session['oauth_token'], session['oauth_token_secret'], 
+        config.object.TWITTER_OAUTH_CONSUMER_KEY, config.object.TWITTER_OAUTH_CONSUMER_SECRET)
+
+    try:
+        response = api.trends.place(_id=woeid)
+        return jsonify(
+            status="ok",
+            trends=response[0]['trends']
+        )
+    except: 
+        print("erro")
+        return jsonify(status="error")
+
+    
+
+    
+
 
 @app.route('/login', methods = [ 'GET', 'POST' ])
 def login():
