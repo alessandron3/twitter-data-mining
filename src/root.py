@@ -45,6 +45,13 @@ def trends():
 
     return render_template('trends.html', name=name, profile_image=img)
 
+@app.route('/tweets')
+def tweets():
+    name = session['user']['screen_name']
+    img = session['user']['profile_image_url']
+
+    return render_template('tweets.html', name=name, profile_image=img)
+
 @app.route('/trends-woeid')
 def trends_json():
     region = request.args.get('region')
@@ -63,6 +70,44 @@ def trends_json():
     except: 
         print("erro")
         return jsonify(status="error")
+
+@app.route('/tweets/search')
+def tweets_json():
+
+    q = request.args.get('q')
+
+    api = oauth_login(session['oauth_token'], session['oauth_token_secret'], 
+        config.object.TWITTER_OAUTH_CONSUMER_KEY, config.object.TWITTER_OAUTH_CONSUMER_SECRET)
+
+    try:
+        resp = api.search.tweets(q=q, count=20)
+
+        statuses = resp['statuses']
+        max_results = min(1000, 100)
+
+        for _ in range(10): #10 * 100 = 1000
+            try:
+                next_results = resp['search_metadata']['next_results']
+            except KeyError, e:
+                break
+
+            kwargs = dict([ kv.split('=')
+                            for kv in next_results[1:].split("&") ])
+            search_results = api.search.tweets(**kwargs)
+
+            statuses += search_results['statuses']
+
+            if len(statuses) > max_results:
+                break
+
+        return jsonify(
+            status="ok",
+            tweets=statuses
+        )
+    except:
+        print("error")
+        return jsonify(status="error")
+
 
     
 
