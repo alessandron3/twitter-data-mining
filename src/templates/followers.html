@@ -69,7 +69,7 @@
 								<i class="ace-icon fa fa-home home-icon"></i>
 								<a href="#">Home</a>
 							</li>
-							<li class="active">Tweets</li>
+							<li class="active">Followers</li>
 						</ul><!-- /.breadcrumb -->
 
 						<div class="nav-search" id="nav-search">
@@ -86,10 +86,10 @@
 						
 						<div class="page-header">
 							<h1>
-								Tweets
+								Followers
 								<small>
 									<i class="ace-icon fa fa-angle-double-right"></i>
-									Tweets postados por
+									Busque por seguidores de algum usuário
 								</small>
 							</h1>
 						</div><!-- /.page-header -->
@@ -102,11 +102,11 @@
                                     
                                     <form class="form-horizontal" role="form">
                                         <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="form-field-tags">Busque tweets de </label>
+                                            <label class="col-sm-3 control-label no-padding-right" for="form-field-tags">Digite um username</label>
                                             
                                             <div class="col-sm-9">
                                                 <div class="inline">
-                                                    <input data-rel="tooltip" type="text" id="tweet-search" placeholder="Username" title="" data-placement="bottom" data-original-title="Digite algum mensagem para pesquisar">
+                                                    <input data-rel="tooltip" type="text" id="username-search" placeholder="Tweet" title="" data-placement="bottom" data-original-title="Digite algum mensagem para pesquisar">
                                                 </div>
                                             </div>
                                         </div>
@@ -581,17 +581,17 @@
 				$(".knob").knob();
                 
                 $("#btn-search-trends").click(function(){
-                    var tag = $('#tweet-search')[0].value;
-                    $.ajax({url: "/tweets/timeline?screen_name="+encodeURIComponent(tag)})
+                    var tag = $('#username-search')[0].value;
+                    $.ajax({url: "/followers-json?screen_name="+encodeURIComponent(tag)})
                         .done(function(result) {
                             clearTable();
 							console.log(result)
                             if(result !== undefined && result.status == 'ok') {
-                                var array = $.map(result.tweets, function(value, index) {
-                                    
+                                var array = $.map(result.followers, function(value, index) {
+                                    console.log(value)
                                     return [value][0];
                                 });
-                                makeTable(array);
+                                makeTable(result.followers.users);
                             }
                         });
                 });
@@ -609,17 +609,16 @@
 					return d.toISOString().slice(0,19);
 				}
 
-                function makeTable(tweets) {
+                function makeTable(followers) {
                     var table = "<table id='simple-table' class='table table-bordered table-hover'>" +
-						"<thead><tr><th class='center'>Name</th><th class='center'>Username</th><th class='center'>Tweet</th><th>Data<th></tr></thead><tbody>";
-                    console.log(tweets)
-                    for (i=0; i < tweets.length; i++) {
-                        table += "<tr><td class='center'>";
-                        table +=  tweets[i].user.name ;
+						"<thead><tr><th class='center'>Foto</th><th class='center'>Name</th><th class='center'>Username</th></tr></thead><tbody>";
+                        console.log('makeTable');
+                    console.log(followers)
+                    for (i=0; i < followers.length; i++) {
+                        table += "<tr><td class='center'><img class='nav-user-photo' src='" + followers[i].profile_image_url + "' />";    
                         table += "</td>";
-						table += "<td class='center'>" + tweets[i].user.screen_name + "</td>";
-                        table += "<td class='left'>" + tweets[i].text + "</td>";
-						table += "<td class='center'>" + formatDate(tweets[i].created_at) + "</td>";
+						table += "<td class='center'>" + followers[i].name + "</td>";
+                        table += "<td class='center'>" + followers[i].screen_name + "</td>";					
                     }
                     table += "</tr></tbody></table>";
 

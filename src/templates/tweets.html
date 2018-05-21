@@ -340,6 +340,7 @@
 					max: 10,
 					value: 2
 				});
+
 				
 				$( "#slider-eq > span" ).css({width:'90%', 'float':'left', margin:'15px'}).each(function() {
 					// read initial values from markup and remove that
@@ -603,16 +604,22 @@
                     $("#trends_tables").children().remove();
                 }
 
+				function formatDate(strDate) {
+					var d = new Date(strDate);
+					return d.toISOString().slice(0,19);
+				}
+
                 function makeTable(tweets) {
                     var table = "<table id='simple-table' class='table table-bordered table-hover'>" +
-						"<thead><tr><th class='center'>Name</th><th class='center'>Tweet</th><th>Data<th></tr></thead><tbody>";
+						"<thead><tr><th class='center'>Name</th><th class='center'>Username</th><th class='center'>Tweet</th><th>Data<th></tr></thead><tbody>";
                     console.log(tweets)
                     for (i=0; i < tweets.length; i++) {
                         table += "<tr><td class='center'>";
                         table +=  tweets[i].user.name ;
                         table += "</td>";
+						table += "<td class='center'>" + tweets[i].user.screen_name + "</td>";
                         table += "<td class='left'>" + tweets[i].text + "</td>";
-						table += "<td class='center'>" + tweets[i].created_at + "</td>";
+						table += "<td class='center'>" + formatDate(tweets[i].created_at) + "</td>";
                     }
                     table += "</tr></tbody></table>";
 
