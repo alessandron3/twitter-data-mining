@@ -1,21 +1,31 @@
 
-## Requisitos
+## Configuração do ambiente Windows
 
 
 # Windows:
 
 - GIT (https://git-scm.com/download/win)
 
-- Python 2.7.9, download para Windows: (https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi)
+- Python 2.7.9, download: (https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi)
 
-- Configurar variavel de ambiente PYTHON_HOME para o endereço de instalação, normalmente para windows é usado o caminho c:\Python27
+- Configurar variavel de ambiente PYTHON_HOME para o endereço de instalação, normalmente para windows é usado o caminho c:\Python27 para a instalação (Link sobre configurações de variaveis de ambiente no Windows https://technet.microsoft.com/pt-br/library/cc668471.aspx)
 
 ![Alt text](python_home.PNG)
 
--- PYTHON_HOME=c:\Python27
--- adicionar a variavel PYTHON_HOME na variavel PATH conforme a figura abaixo (texto a ser add na variavel PATH %PYTHON_HOME%\;%PYTHON_HOME%\Scripts\ ):
+- Adicionar na variavel Path o seguinte texto: ;%PYTHON_HOME%\;%PYTHON_HOME%\Scripts\ :
 
 ![Alt text](python_in_path.PNG)
+
+
+- Para testar a configuração basta abrir um novo terminal e digitar os seguintes comandos abaixos:
+
+```shell
+    python --version
+```
+
+```shell
+    pip --version
+```
 
 
 
