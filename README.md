@@ -22,9 +22,17 @@
 ```shell
     python --version
 ```
+- Saida para esse comando deve ser algo parecido com:
+```shell
+	Python 2.7.9
+```
 
 ```shell
     pip --version
+```
+- Saida para esse comando deve ser algo parecido com:
+```shell
+	pip 1.5.6 from C:\Python27\lib\site-packages (python 2.7)
 ```
 
 
