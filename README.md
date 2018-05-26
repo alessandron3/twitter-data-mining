@@ -83,7 +83,7 @@ Baixando as dependencias
 Digite o comando abaixo para executar a aplicação:
 ```shell
 	ENV\Scripts\python.exe src\app.py
-``´
+```
 
 Para acessar abra seu browser e digite o endereço abaixo:
 http://localhost:5000/login
